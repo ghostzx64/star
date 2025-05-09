@@ -1,0 +1,172 @@
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "Esp Hub by Ghostzx64"
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 220, 0, 250)
+mainFrame.Position = UDim2.new(0.5, -110, 0.5, -125)
+mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Parent = screenGui
+
+local titulo = Instance.new("TextLabel")
+titulo.Size = UDim2.new(1, 0, 0, 30)
+titulo.Position = UDim2.new(0, 0, 0, 0)
+titulo.Text = "Esp Hub - Test"
+titulo.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+titulo.TextColor3 = Color3.fromRGB(255, 255, 255)
+titulo.TextScaled = true
+titulo.Parent = mainFrame
+
+local espBoxButton = Instance.new("TextButton")
+espBoxButton.Size = UDim2.new(0, 200, 0, 30)
+espBoxButton.Position = UDim2.new(0, 10, 0, 40)
+espBoxButton.Text = "Esp Box - Amarela"
+espBoxButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+espBoxButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+espBoxButton.Parent = mainFrame
+
+local desativarEspBoxButton = Instance.new("TextButton")
+desativarEspBoxButton.Size = UDim2.new(0, 200, 0, 30)
+desativarEspBoxButton.Position = UDim2.new(0, 10, 0, 80)
+desativarEspBoxButton.Text = "Esp Box - OFF"
+desativarEspBoxButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+desativarEspBoxButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+desativarEspBoxButton.Parent = mainFrame
+
+local espNameButton = Instance.new("TextButton")
+espNameButton.Size = UDim2.new(0, 200, 0, 30)
+espNameButton.Position = UDim2.new(0, 10, 0, 120)
+espNameButton.Text = "Esp Name"
+espNameButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+espNameButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+espNameButton.Parent = mainFrame
+
+local desativarEspNameButton = Instance.new("TextButton")
+desativarEspNameButton.Size = UDim2.new(0, 200, 0, 30)
+desativarEspNameButton.Position = UDim2.new(0, 10, 0, 160)
+desativarEspNameButton.Text = "Esp Name - OFF"
+desativarEspNameButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+desativarEspNameButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+desativarEspNameButton.Parent = mainFrame
+
+local fecharButton = Instance.new("TextButton")
+fecharButton.Size = UDim2.new(0, 200, 0, 30)
+fecharButton.Position = UDim2.new(0, 10, 0, 200)
+fecharButton.Text = "Fechar Hub"
+fecharButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+fecharButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+fecharButton.Parent = mainFrame
+
+local espBoxAtivo = false
+local espNameAtivo = false
+local espObjects = {}
+
+local function criarESPBox(player)
+    if player == game.Players.LocalPlayer then return end
+    if not player.Character or not player.Character:FindFirstChild("Head") then return end
+
+    local billboard = Instance.new("BillboardGui")
+    billboard.Name = "ESP"
+    billboard.Adornee = player.Character:WaitForChild("Head") -- AGORA FICA ACIMA DA CABEÇA
+    billboard.Size = UDim2.new(8, 0, 8, 0) -- MAIOR
+    billboard.StudsOffset = Vector3.new(0, 2, 0) -- sobe acima da cabeça
+    billboard.AlwaysOnTop = true
+    billboard.Parent = player.Character
+
+    local box = Instance.new("Frame")
+    box.Size = UDim2.new(1, 0, 1, 0)
+    box.BackgroundColor3 = Color3.fromRGB(255, 255, 0) -- Amarelo
+    box.BackgroundTransparency = 0.7
+    box.BorderSizePixel = 2
+    box.BorderColor3 = Color3.fromRGB(255, 255, 0)
+    box.Parent = billboard
+
+    table.insert(espObjects, billboard)
+end
+
+local function criarESPName(player)
+    if player == game.Players.LocalPlayer then return end
+    if not player.Character or not player.Character:FindFirstChild("Head") then return end
+
+    local billboard = Instance.new("BillboardGui")
+    billboard.Name = "ESPName"
+    billboard.Adornee = player.Character:WaitForChild("Head")
+    billboard.Size = UDim2.new(4, 0, 0.5, 0)
+    billboard.StudsOffset = Vector3.new(0, 3, 0) -- mais acima ainda
+    billboard.AlwaysOnTop = true
+    billboard.Parent = player.Character
+
+    local nameLabel = Instance.new("TextLabel")
+    nameLabel.Size = UDim2.new(1, 0, 1, 0)
+    nameLabel.BackgroundTransparency = 1
+    nameLabel.Text = player.Name
+    nameLabel.TextColor3 = Color3.fromRGB(255, 0, 0) -- Vermelho
+    nameLabel.TextStrokeTransparency = 0
+    nameLabel.TextScaled = true
+    nameLabel.Parent = billboard
+
+    table.insert(espObjects, billboard)
+end
+
+local function ativarESPBox()
+    if espBoxAtivo then return end
+    espBoxAtivo = true
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        criarESPBox(player)
+    end
+end
+
+local function desativarESPBox()
+    espBoxAtivo = false
+    for _, esp in ipairs(espObjects) do
+        if esp and esp.Parent then
+            esp:Destroy()
+        end
+    end
+    espObjects = {}
+end
+
+local function ativarESPName()
+    if espNameAtivo then return end
+    espNameAtivo = true
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        criarESPName(player)
+    end
+end
+
+local function desativarESPName()
+    espNameAtivo = false
+    for _, esp in ipairs(espObjects) do
+        if esp and esp.Parent then
+            esp:Destroy()
+        end
+    end
+    espObjects = {}
+end
+
+espBoxButton.MouseButton1Click:Connect(function()
+    desativarESPBox()
+    ativarESPBox()
+end)
+
+desativarEspBoxButton.MouseButton1Click:Connect(function()
+    desativarESPBox()
+end)
+
+espNameButton.MouseButton1Click:Connect(function()
+    desativarESPName()
+    ativarESPName()
+end)
+
+desativarEspNameButton.MouseButton1Click:Connect(function()
+    desativarESPName()
+end)
+
+fecharButton.MouseButton1Click:Connect(function()
+    desativarESPBox()
+    desativarESPName()
+    screenGui:Destroy()
+end)
